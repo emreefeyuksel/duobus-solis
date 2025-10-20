@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İKİ GÜNEŞ | Bir FRP Macerası</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e8e8e8;
+            font-family: 'Crimson Text', serif;
+            overflow-x: hidden;
+        }
+        
+        /* Animated background stars */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 3s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        .hero::before {
+            content: '◈';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            color: #ffd700;
+            opacity: 0.6;
+        }
+        
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffd700 0%, #ff8c00 50%, #ffd700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            margin-bottom: 20px;
+            letter-spacing: 8px;
+            animation: glow 3s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #b8b8b8;
+            letter-spacing: 2px;
+        }
+        
+        /* Section Styling */
+        .section {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 10px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .section:hover {
+            border-color: rgba(255, 215, 0, 0.5);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+        }
+        
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 3px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            padding-bottom: 15px;
+        }
+        
+        .section-content {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #d4d4d4;
+        }
+        
+        .section-content p {
+            margin-bottom: 15px;
+        }
+        
+        /* Quote styling */
+        .quote {
+            font-style: italic;
+            color: #ffcc66;
+            border-left: 3px solid #ffd700;
+            padding-left: 20px;
+            margin: 30px 0;
+            opacity: 0.9;
+        }
+        
+        /* Grid for powers */
+        .powers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .power-card {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        
+        .power-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.6);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+        }
+        
+        .power-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        
+        .power-desc {
+            font-size: 1rem;
+            color: #c8c8c8;
+            line-height: 1.6;
+        }
+        
+        /* Mystery box */
+        .mystery-box {
+            background: rgba(139, 0, 0, 0.3);
+            border: 2px solid rgba(139, 0, 0, 0.6);
+            border-radius: 10px;
+            padding: 30px;
+            margin: 40px 0;
+            text-align: center;
+        }
+        
+        .mystery-box h3 {
+            font-family: 'Cinzel', serif;
+            color: #ff6b6b;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        
+        .mystery-text {
+            color: #ffaaaa;
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 2px solid rgba(255, 215, 0, 0.3);
+            margin-top: 60px;
+        }
+        
+        .footer-text {
+            font-family: 'Cinzel', serif;
+            color: #888;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+                letter-spacing: 4px;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section {
+                padding: 25px;
+            }
+            
+            .powers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated stars background -->
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1 class="title">İKİ GÜNEŞ</h1>
+            <p class="subtitle">Tanrıların Gölgesinde Bir Macera</p>
+        </div>
+        
+        <!-- Intro Section -->
+        <div class="section">
+            <div class="section-content">
+                <p style="font-size: 1.3rem; text-align: center; color: #ffd700;">
+                    Gökyüzünde iki güneş var.<br>
+                    Birisi aydınlık, birisi karanlık.<br>
+                    Her ikisi de bir zamanlar tanrıydı.<br>
+                    <strong>Şimdi sadece insanlar.</strong>
+                </p>
+            </div>
+        </div>
+        
+        <!-- The World Section -->
+        <div class="section">
+            <h2 class="section-title">DÜNYA</h2>
+            <div class="section-content">
+                <p><strong>40 yıl önce</strong>, tanrılar Aurora ve Erebus, dünyayı savaşla neredeyse yok ettiler. Sonra... durdular. Güçlerinden vazgeçtiler. Ölümlüler arasına karıştılar.</p>
+                
+                <p><strong>Neden?</strong> Kimse bilmiyor.</p>
+                
+                <p>Geriye kalan: Harap olmuş kentler, yeni krallıklar, ve büyü kullanmayı unutmuş bir dünya.</p>
+                
+                <div class="quote">
+                    "Tanrılar bize kaderimizi emanet etti. Peki biz... ne yapacağız?"
+                </div>
+                
+                <p>Sen bu dünyada doğdun. Tanrıları hiç görmedin. Ama onların bıraktığı dünyada yaşıyorsun.</p>
+            </div>
+        </div>
+        
+        <!-- Powers Section -->
+        <div class="section">
+            <h2 class="section-title">BÜYÜK GÜÇLER</h2>
+            <div class="powers-grid">
+                <div class="power-card">
+                    <div class="power-title">🏛️ Travos</div>
+                    <div class="power-desc">Cumhuriyet. Büyücüler ve tüccarlar. "Tanrılar bizi terk etti." Kuzeybatıda, bilim ve pragmatizm.</div>
+                </div>
+                
+                <div class="power-card">
+                    <div class="power-title">⚔️ Nabaş</div>
+                    <div class="power-desc">Krallık. Aric'in (Aurora'nın eski halefi) onurlu savaşçıları. Doğuda, bozkırlarda at sürerler.</div>
+                </div>
+                
+                <div class="power-card">
+                    <div class="power-title">🔥 Oriri</div>
+                    <div class="power-desc">Teokrasi. Lyra'nın (Erebus'un eski halefi) rekabetçi düzeni. Güneybatıda, hırs ve yükseliş.</div>
+                </div>
+                
+                <div class="power-card">
+                    <div class="power-title">🏜️ Vagabundus</div>
+                    <div class="power-desc">Çöl göçebeleri. Başıboş fanatikler. Güneyde, kumların altında ne arıyorlar?</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Magic Section -->
+        <div class="section">
+            <h2 class="section-title">BÜYÜ</h2>
+            <div class="section-content">
+                <p><strong>Eskiden</strong> herkes büyü öğrenebiliyordu. Okullar vardı, kitaplar vardı.</p>
+                
+                <p><strong>Şimdi</strong> sadece <em>tanrı tozuna</em> maruz kalan ailelerin çocukları büyü kullanabiliyor. Doğuştan. Nadir. Değerli.</p>
+                
+                <p>Eski büyücüler? Artık hiçbir şey yapamıyorlar. Büyü onlara itaat etmiyor.</p>
+                
+                <div class="quote">
+                    "Büyü artık bir hediye değil... bir işaret."
+                </div>
+            </div>
+        </div>
+        
+        <!-- Alfasad Section (MYSTERY) -->
+        <div class="section">
+            <h2 class="section-title">🌑 ALFASAD</h2>
+            <div class="section-content">
+                <p>Tanrıların savaşından kalan <strong>karanlık enerji</strong>.</p>
+                
+                <p>Canlıları değiştiriyor. Mutasyona uğratıyor. Kuzeyde dağlarda yoğun.</p>
+                
+                <p>Bazıları onu kullanıyor. <em>Güçlü</em> ama <em>tehlikeli</em>.</p>
+                
+                <div class="mystery-box">
+                    <h3>⚠️ DİKKAT</h3>
+                    <p class="mystery-text">Alfasad'a çok yaklaşan... geri dönemeyebilir.</p>
+                </div>
+                
+                <p style="text-align: center; margin-top: 20px; color: #888; font-style: italic;">
+                    (Oyunda daha fazlasını öğreneceksin...)
+                </p>
+            </div>
+        </div>
+        
+        <!-- Your Story Section -->
+        <div class="section">
+            <h2 class="section-title">SENİN HİKAYEN</h2>
+            <div class="section-content">
+                <p style="font-size: 1.2rem;">Tanrıları görmedin. Onların savaşını bilmiyorsun. Sadece hikayelerden, dedelerinin anlattıklarından...</p>
+                
+                <p style="font-size: 1.2rem;">Ama şimdi bu dünyada yaşıyorsun. Seçimler yapmalısın.</p>
+                
+                <div style="margin: 30px 0; padding: 30px; background: rgba(255, 215, 0, 0.1); border-radius: 8px; border-left: 4px solid #ffd700;">
+                    <p style="font-size: 1.3rem; font-weight: 600; color: #ffd700; margin-bottom: 15px;">❓ Sorular:</p>
+                    <p>→ Hangi güce hizmet edeceksin?</p>
+                    <p>→ Tanrılara inanıyor musun?</p>
+                    <p>→ Alfasad'ı kullanır mısın?</p>
+                    <p>→ Gücü mü seçeceksin, yoksa onuru mu?</p>
+                </div>
+                
+                <p style="text-align: center; font-size: 1.4rem; color: #ffd700; margin-top: 30px;">
+                    <strong>Kaderiniz sizin ellerinizde.</strong>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Factions Section -->
+        <div class="section">
+            <h2 class="section-title">TRAVOS FRAKSİYONLARI</h2>
+            <div class="powers-grid">
+                <div class="power-card" style="border-color: rgba(0, 255, 0, 0.3);">
+                    <div class="power-title">🕊️ BARIŞ FRAKSİYONU</div>
+                    <div class="power-desc">
+                        <strong>MARELLIA VİRENNA</strong><br>
+                        55 yaşında, gümüş saçlı, zarif diplomat. Tanrıların düşüşünü gördü, barışa inanıyor. "Pantheonlarla anlaşmalıyız, savaş çıkmaz yol."
+                    </div>
+                </div>
+                
+                <div class="power-card" style="border-color: rgba(255, 0, 0, 0.3);">
+                    <div class="power-title">⚔️ SAVAŞ FRAKSİYONU</div>
+                    <div class="power-desc">
+                        <strong>FLAVIUS CRAXIUS</strong><br>
+                        42 yaşında, sert bakışlı asker. Dedesi Dedecus isyanında ölen kahramandı. "Pantheonlar tehdittir, kuzeyi temizlemeliyiz."
+                    </div>
+                </div>
+                
+                <div class="power-card" style="border-color: rgba(255, 255, 0, 0.3);">
+                    <div class="power-title">💰 İZOLASYON FRAKSİYONU</div>
+                    <div class="power-desc">
+                        <strong>LORD VARIS</strong><br>
+                        Tüccar Birliği temsilcisi. Şişman, gergin. "Bizi ilgilendirmez, ticarete odaklanalım."
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monologue Section -->
+        <div class="section" style="background: rgba(0, 0, 0, 0.7); border-color: rgba(255, 215, 0, 0.5);">
+            <h2 class="section-title" style="color: #ffd700;">TRAVOS ŞEHRİ</h2>
+            <div class="section-content">
+                <div style="font-style: italic; color: #ffcc66; text-align: center; font-size: 1.2rem; line-height: 1.8; margin: 30px 0;">
+                    <p>"Travos. Cumhuriyetin kalbi. Gökyüzünde iki güneş, Aurora ve Erebus, bir zamanlar tanrıydı. Şimdi sadece ışık... ve belki de bir hatıra."</p>
+                    
+                    <p style="margin-top: 25px;">"Bugün farklı. Konsey toplanıyor. Kuzeyden haberler geldi... Pantheonlar huzursuz, Dokunulmamışlar isyan ediyor. Travos ne yapmalı?"</p>
+                    
+                    <p style="margin-top: 25px; color: #ffd700; font-weight: 600;">"Ve siz... siz de buradasınız."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teaser Section -->
+        <div class="section" style="background: rgba(0, 0, 0, 0.6); border-color: rgba(255, 100, 100, 0.4);">
+            <h2 class="section-title" style="color: #ff6b6b;">TRAVOS ENTRIKASI</h2>
+            <div class="section-content">
+                <p style="text-align: center; font-size: 1.3rem; color: #ffaaaa;">
+                    Travos şehrinde büyük bir Konsey Toplantısı...<br>
+                    Kuzeydeki pantheonlar daha agresif, Dokunulmamışlar isyan ediyor.
+                </p>
+                
+                <p style="text-align: center; margin-top: 20px; font-style: italic; color: #d4d4d4;">
+                    Travos müdahale etmeli mi?<br>
+                    <strong style="color: #ffd700;">3 büyük fraksiyon çekişiyor...</strong>
+                </p>
+                
+                
+                <p style="text-align: center; margin-top: 20px; font-size: 1.1rem; color: #888;">
+                    <strong style="color: #ff6b6b;">Bir hafta içinde konseyi etkilemeli, ama...</strong><br>
+                    <em>Kime güveneceksin?</em>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Coming Soon -->
+        <div class="section" style="text-align: center; background: rgba(255, 215, 0, 0.1);">
+            <h2 class="section-title">🎲 YAKINDA</h2>
+            <div class="section-content">
+                <p style="font-size: 1.3rem; color: #ffd700;">Macera Başlıyor...</p>
+                <p style="margin-top: 15px; color: #b8b8b8;">İki güneş doğar, iki güneş batar.</p>
+                <p style="color: #888;">Ama hikaye... devam eder.</p>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p class="footer-text">◈ İKİ GÜNEŞ ◈</p>
+            <p class="footer-text" style="margin-top: 10px; font-size: 0.8rem;">Bir FRP Macerası</p>
+        </div>
+    </div>
+    
+    <script>
+        // Generate random stars
+        const starsContainer = document.getElementById('stars');
+        const starCount = 100;
+        
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsContainer.appendChild(star);
+        }
+        
+        // Smooth scroll reveal animation
+        const sections = document.querySelectorAll('.section');
+        
+        const revealOnScroll = () => {
+            sections.forEach(section => {
+                const sectionTop = section.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (sectionTop < windowHeight * 0.85) {
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }
+            });
+        };
+        
+        // Initial state
+        sections.forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(30px)';
+            section.style.transition = 'all 0.8s ease';
+        });
+        
+        window.addEventListener('scroll', revealOnScroll);
+        window.addEventListener('load', revealOnScroll);
+    </script>
+</body>
+</html>
