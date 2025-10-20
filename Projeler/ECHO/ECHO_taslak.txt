@@ -1,0 +1,77 @@
+1. Proje Hazırlık & Planlama
+
+Proje tanımının yapılması
+
+Literatür taraması ve benzer projelerin incelenmesi
+
+İhtiyaç analizi (görme engelli bireyler, şehir altyapısı)
+
+Fizibilite çalışması (ekonomi, teknik, operasyon)
+
+Görev dağılımı ve takvim taslağı
+
+2. Donanım Tasarımı ve Temini
+
+Donanım gereksinimlerinin belirlenmesi
+
+Gözlük üzerinde kamera entegrasyonu
+
+BLE / RFID modüllerinin seçimi
+
+İşlemci (Raspberry Pi Zero / ESP32) seçimi
+
+Batarya ve güç sistemi seçimi
+
+Tedarik ve satın alma
+
+3. Yazılım Geliştirme
+
+Sistem mimarisi tasarımı
+
+BLE / RFID haberleşme kodu
+
+Nesne tanıma (kamera + yapay zekâ modeli)
+
+TTS (metinden sese) entegrasyonu
+
+Çok dilli ses desteği (Türkçe + İngilizce)
+
+Temel test uygulamaları
+
+4. Sistem Entegrasyonu
+
+Kamera + işlemci + güç sisteminin bağlanması
+
+Gözlük → bel çantası bağlantı tasarımı (kablo, konnektör)
+
+BLE / RFID ile yönlendirme senaryolarının test edilmesi
+
+Yazılımın donanım üzerinde entegrasyonu
+
+Sesli yönlendirme testleri (ör. “sola dön”, “dikkat rampa”)
+
+5. Test & Validasyon
+
+Laboratuvar ortamı testleri (kapsama, gecikme, enerji)
+
+Kapalı alan pilot testleri (koridor, bina içi)
+
+Dış mekân testleri (yaya geçidi, durak, kaldırım)
+
+Kullanıcı senaryoları (RFID krokisi testleri)
+
+Hata tespiti ve iyileştirmeler
+
+6. Raporlama & Sunum
+
+Teknik raporun hazırlanması
+
+Ekonomik fizibilite raporunun hazırlanması
+
+Görev dağılım raporu (ekip katkıları)
+
+Sunum slaytlarının hazırlanması
+
+Danışman görüşleri doğrultusunda revizyon
+
+Final rapor ve sunum teslimi
